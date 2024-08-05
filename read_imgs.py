@@ -8,6 +8,7 @@ from PIL import Image
 class ReadImages:
     def __init__(self, folderpath):
         self.folderpath = folderpath
+        self.img_array = [] # array of single image
         self.img_array_array = [] # array of all images in folder
 
     def img_to_arr(self, filepath):
@@ -29,6 +30,9 @@ class ReadImages:
                     self.img_array_array.append(arr)
         return self.img_array_array
     
+class Hist(ReadImages):
+    def histogram(self):
+        img = self. 
 folder_path = "imgs"
 reader = ReadImages(folder_path)
 images_array = reader.read_folder()
