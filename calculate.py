@@ -27,9 +27,14 @@ class MinVar:
     
     def calc_intragroup_var(self, t1, t2):
         arr1 = self.px_count[0:t1+1]
-        arr2 = self.px_count[t1:t2+1]
-        arr3 = self.px_count[t2:256]
+        arr2 = self.px_count[t1+1:t2+1]
+        arr3 = self.px_count[t2+1:]
         n_total = sum(self.px_count)
+
+        print(f"t1 = {t1}, t2 = {t2}")
+        print(f"arr1: {arr1}")
+        print(f"arr2: {arr2}")
+        print(f"arr3: {arr3}")
 
         if len(arr1) != 0:
             m1 = np.mean(arr1)
@@ -59,8 +64,8 @@ class MinVar:
         return intra_g_var
         
     def find_min_var(self):
-        for t1 in range(0, 255):
-            for t2 in range(t1+1, 256):
+        for t1 in range(0, 10):
+            for t2 in range(1, 11):
                 v = self.calc_intragroup_var(t1, t2)
                 print(f"Evaluating t1 = {t1}, t2 = {t2}, var = {v}")  # Debugging print statement
                 if self.min_var == None or self.min_var > v :
@@ -79,31 +84,32 @@ class MinVar:
 
 
 
-img = cv2.imread('imgs/3.jpg')
-shape = img.shape[:2]
+# img = cv2.imread('imgs/3.jpg')
+# shape = img.shape[:2]
 
-img = Image.open('imgs/3.jpg').convert('RGB')
-rgb_img = np.array(img)
-gray_scale_img = pcv.rgb2gray_lab(rgb_img=rgb_img, channel='a')
-img_array = gray_scale_img
-# print(img_array)
+# img = Image.open('imgs/3.jpg').convert('RGB')
+# rgb_img = np.array(img)
+# gray_scale_img = pcv.rgb2gray_lab(rgb_img=rgb_img, channel='a')
+# img_array = gray_scale_img
+# # print(img_array)
 
-# initialize empty array for linearization of img_array 0 to 255
-linear_arr = np.zeros(256, dtype=int) 
-for i in range(0, shape[0]):
-    for j in range(0, shape[1]):
-        linear_arr[img_array[i][j]] += 1
+# # initialize empty array for linearization of img_array 0 to 255
+# linear_arr = np.zeros(256, dtype=int) 
+# for i in range(0, shape[0]):
+#     for j in range(0, shape[1]):
+#         linear_arr[img_array[i][j]] += 1
 
-# print(linear_arr)
+# # print(linear_arr)
 
-mv = MinVar(linear_arr)
-mv_value = mv.find_min_var()
+# mv = MinVar(linear_arr)
+# mv_value = mv.find_min_var()
 
 
 
 
 # test with small array
 # px_count = [0, 0, 4, 5, 3, 2, 1, 0]
-# mv = MinVar(px_count)
-# print( "individual variance test: " + str(mv.calc_var(3.4, px_count)) )
-# mv_value = mv.find_min_var()
+px_count = [0, 4, 3, 2, 1, 0]
+mv = MinVar(px_count)
+print( "individual variance test: " + str(mv.calc_var(3.4, px_count)) )
+mv_value = mv.find_min_var()
