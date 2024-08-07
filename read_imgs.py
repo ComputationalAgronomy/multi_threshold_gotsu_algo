@@ -30,12 +30,33 @@ class ReadImages:
                 if arr is not None:
                     self.img_array_array.append(arr)
         return self.img_array_array
+    
+
+class Linearize:
+    def __init__(self, img_arr_arr):
+        self.linearized_arr = []
+        self.img_arr_arr = img_arr_arr
+        
+    def linearize_single(self, arr):
+        # initialize empty array for linearization of img_array 0 to 255
+        linear_arr = np.zeros(256, dtype=int) 
+        for i in range(0, len(arr)):
+            for j in range(0, len(arr[i])):
+                linear_arr[arr[i][j]] += 1
+        return linear_arr
+    
+    def linearize_multi(self):
+        for x in self.img_arr_arr:
+            linear_arr = self.linearize_single(x)
+            self.linearized_arr.append(linear_arr)
+        return self.linearized_arr
+
 
 class Hist:
     def __init__(self, img_array_array):
         self.img_array_array = img_array_array
 
-    def histogram(self):
+    def histogram(self, threshold):
         if not self.img_array_array:
             print("No images to compute histogram.")
             return None
@@ -62,18 +83,26 @@ class Hist:
             plt.title(f"Histogram for Image {idx + 1}")
             plt.xlabel("Pixel Value")
             plt.ylabel("Frequency")
+
+            if threshold:
+                for t in threshold:
+                    plt.axvline(x=t, color='green', linewidth=1)
+
             plt.show()
         
         print("Histograms plotted")
-        return
+
 
 folder_path = "imgs"
 reader = ReadImages(folder_path)
 images_array = reader.read_folder()
 
-print(f"Number of images read: {len(images_array)}")
-if images_array:
-    print(f"Shape of the first image array: {images_array[0].shape}")
+lin_arr = Linearize(images_array).linearize_multi()
+print(lin_arr)
 
-histogram = Hist(images_array)
-histogram.histogram()
+# print(f"Number of images read: {len(images_array)}")
+# if images_array:
+#     print(f"Shape of the first image array: {images_array[0].shape}")
+
+# histogram = Hist(images_array)
+# histogram.histogram([92, 115])
