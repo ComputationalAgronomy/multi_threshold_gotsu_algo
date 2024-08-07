@@ -69,7 +69,7 @@ class MinVar:
         intra_g_var = wv1 + wv2
         return intra_g_var
         
-    def find_min_var(self):
+    def find_threshold(self):
         for t1 in range(0, 255):
             for t2 in range(1, 256):
                 v = self.calc_intragroup_var(t1, t2)
@@ -77,20 +77,18 @@ class MinVar:
                     self.min_var = v
                     self.t1 = t1
                     self.t2 = t2
-                    
         print("final")
         print("min var:" + str(self.min_var))
         print("t1: " + str(self.t1))
         print("t2: " + str(self.t2))
-        return self.min_var
+        return [self.t1, self.t2]
     
-    def find_min_var_single(self):
+    def find_threshold_single(self):
         for t in range(0, 255):
             v = self.calc_intragroup_var_single(t)
             if self.min_var == None or self.min_var > v :
                 self.min_var = v
-                self.t1 = t
-                    
+                self.t1 = t  
         print("final")
         print("min var:" + str(self.min_var))
         print("t1: " + str(self.t1))
@@ -116,7 +114,7 @@ for i in range(0, shape[0]):
 # print(linear_arr)
 
 mv = MinVar(linear_arr)
-mv_value = mv.find_min_var()
+mv_value = mv.find_threshold()
 
 
 
