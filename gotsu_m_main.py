@@ -1,5 +1,6 @@
-from read_imgs import ReadImages, Linearize
+from read_imgs import ReadImages, Linearize, Hist
 from gotsu_m import M_Gotsu
+from segment import Segment
 
 
 folder_path = "imgs"
@@ -12,3 +13,8 @@ multi = M_Gotsu(lin_arr)
 thresholds = multi.find_thresh()
 
 print(thresholds)
+
+Segment(thresholds, images_array, 1)
+
+histogram = Hist(images_array)
+histogram.histogram(thresholds)
