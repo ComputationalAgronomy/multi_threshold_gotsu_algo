@@ -9,7 +9,7 @@ class ReadImages:
     def __init__(self, folderpath):
         self.folderpath = folderpath
         self.img_array = []  # array of single image
-        self.img_array_array = []  # array of all images in folder
+        self.global_img_arr = []  # array of all images in folder
 
     def img_to_arr(self, filepath):
         try:
@@ -28,10 +28,40 @@ class ReadImages:
                 filepath = os.path.join(self.folderpath, filename)
                 arr = self.img_to_arr(filepath)
                 if arr is not None:
-                    self.img_array_array.append(arr)
-        return self.img_array_array
+                    self.global_img_arr.append(arr)
+        return self.global_img_arr
     
+class SplitArray:
+    def __init__(self, global_img_arr, t):
+        self.glob_arr = global_img_arr
+        self.t = t
+        self.g1_arr = []
+        self.g2_arr = []
+        self.g3_arr = []
+        self.split()
+    
+    def split(self):
+        for array in self.glob_arr:
+            g1 = []
+            g2 = []
+            g3 = []
 
+            for i in range(array.shape[0]):  # Loop through rows
+                for j in range(array.shape[1]):  # Loop through columns
+                    value = array[i, j]
+                    if value != 0:
+                        if value < self.t[0]:
+                            g1.append(value)
+                        elif self.t[0] <= value < self.t[1]:
+                            g2.append(value)
+                        else:
+                            g3.append(value)
+
+            self.g1_arr.append(g1)
+            self.g2_arr.append(g2)
+            self.g3_arr.append(g3)
+        return self.g1_arr, self.g2_arr, self.g3_arr
+                    
 class Linearize:
     def __init__(self, img_arr_arr):
         self.linearized_arr = []
@@ -51,17 +81,16 @@ class Linearize:
             self.linearized_arr.append(linear_arr)
         return self.linearized_arr
 
-
 class Hist:
-    def __init__(self, img_array_array):
-        self.img_array_array = img_array_array
+    def __init__(self, global_img_arr):
+        self.global_img_arr = global_img_arr
 
     def histogram(self, threshold):
-        if not self.img_array_array:
+        if not self.global_img_arr:
             print("No images to compute histogram.")
             return None
         
-        for idx, img in enumerate(self.img_array_array):
+        for idx, img in enumerate(self.global_img_arr):
             # Ensure image data is valid
             if img is None or img.size == 0:
                 print(f"Image {idx + 1} is empty or not valid.")
@@ -91,18 +120,3 @@ class Hist:
             plt.show()
         
         print("Histograms plotted")
-
-
-folder_path = "imgs"
-reader = ReadImages(folder_path)
-images_array = reader.read_folder()
-
-lin_arr = Linearize(images_array).linearize_multi()
-print(lin_arr)
-
-# print(f"Number of images read: {len(images_array)}")
-# if images_array:
-#     print(f"Shape of the first image array: {images_array[0].shape}")
-
-# histogram = Hist(images_array)
-# histogram.histogram([92, 115])
