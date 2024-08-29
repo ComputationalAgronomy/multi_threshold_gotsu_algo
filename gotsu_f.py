@@ -29,28 +29,22 @@ class M_Gotsu:
             cumul_n_all_images.append(cumul_n)
         self.cumul_value = cumul_value_all_images
         self.cumul_n = cumul_n_all_images
-        # print(f"cumul value: {self.cumul_value}")
-        # print(f"cumul n: {self.cumul_n}")
     
     # ------- Calculate f (variance within image) -------
     def calc_w(self, i, n):
         if self.cumul_n[i][-1] != 0:
             w = n / self.cumul_n[i][-1]
-            #print(f"weight: {w}")
             return w
         else: return 0
     
     def calc_v(self, i, n, t1, t2, m_arr):
-        #print(f"in calc v function: {i}, {n}, {t1}, {t2}, {m_arr}")
         sqd = 0
         v = 0
         for j in range(t1, t2+1):
             if self.px_count[i][j] != 0:
                 sqd += ( (j - m_arr[i])**2 ) * self.px_count[i][j] 
-                #print(f"sqd: {sqd}")
         if n != 0:
             v = sqd / n
-        #print(f"variance: {v}------")
         return v
 
     def mean_array(self, t1, t2):
@@ -62,15 +56,12 @@ class M_Gotsu:
             elif t1 == 0 and t2 != 0:
                 v = i[t2]
                 n = j[t2]
-                #print(f"mean array: {v}/{n}")
             else:
                 v = i[t2] - i[t1-1]
                 n = j[t2] - j[t1-1]
-                #print(f"mean array: ({i[t2]}-{i[t1-1]})/{n}")
 
             if n != 0:
                 m_arr.append(v/n)
-                #print(v/n)
             else:
                 m_arr.append(0)
             
@@ -82,11 +73,8 @@ class M_Gotsu:
         for i in range(0, len(m_arr)):
             if t1 == 0:
                 n = self.cumul_n[i][t2]
-                #print(f"n: {self.cumul_n[i][t2]}")
             else:
                 n = self.cumul_n[i][t2] - self.cumul_n[i][t1-1]
-                #print(f"n: {self.cumul_n[i][t2]} - {self.cumul_n[i][t1-1]} = {n}")
-
             w = self.calc_w(i, n)
             v = self.calc_v(i, n, t1, t2, m_arr)
             f += w*v
@@ -96,7 +84,6 @@ class M_Gotsu:
     def find_thresh_f_only(self): # two thresholds with f without g
         for t1 in range(0, len(self.px_count[0])):
             for t2 in range(t1+1, len(self.px_count[0])): 
-                #print(f"t1: {t1}, t2: {t2} ----------------------")
                 f = 0
 
                 if self.min_g == None:
@@ -105,29 +92,19 @@ class M_Gotsu:
                     self.t = [t1, t2]
 
                 else:
-                    #print("~~~ 1 ~~~")
-                    #print(self.px_count[0][0:t1])
                     x = self.calc_f(0, t1)
-                    #print(f"f1: {x}")
                     f += x
                     if f < self.min_g:
-                        #print("~~~ 2 ~~~")
-                        #print(self.px_count[0][t1+1:t2])
                         x = self.calc_f(t1+1, t2)
-                        #print(f"f2: {x}")
                         f += x 
 
                         if f < self.min_g:
-                            #print("~~~ 3 ~~~")
-                            #print(self.px_count[0][t2+1:len(self.px_count[0])-1])
                             x = self.calc_f(t2+1, len(self.px_count[0])-1)
-                            #print(f"f3: {x}")
                             f += x
 
                             if f < self.min_g:
                                 self.min_g = f
                                 self.t = [t1, t2]
-                                #print(f"f: {f}")
 
         print("min f:" + str(self.min_g))
         print("t1: " + str(self.t[0]))
