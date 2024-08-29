@@ -14,29 +14,22 @@ class GenerateData:
         # generate left side
         i = x - w/2
         j = x
-        steps = h / (w/2)
         k = h
         
         while j >= 0 and j >= i:
-            self.generated_data[j] = k + random.randint(-randomness, randomness)
+            self.generated_data[j] = max(0, k + random.randint(-randomness, randomness))
             j -= 1
-            if k-steps > 0:
-                k -= steps
-            else:
-                k = 0
-            
+            k = max(0, int(k / 1.5))
+
         # generate right side
         i = x + w/2
         j = x + 1
-        k = h - steps
+        k = h//2
 
         while j < 256 and j < i:
-            self.generated_data[j] = k + random.randint(-randomness, randomness)
+            self.generated_data[j] = max(0, k + random.randint(-randomness, randomness))
             j += 1
-            if k-steps > 0:
-                k -= steps
-            else:
-                k = 0
+            k = max(0, int(k / 1.5))
 
         pixel_array = np.array(self.generated_data, dtype=np.float32)
         pixel_array = pixel_array.astype(np.uint8)
@@ -92,10 +85,8 @@ class Hist:
             plt.show()
 
 arr = GenerateData()
-generated_arr = arr.insert_hill(150, 50, 60, 10)
-
-print(len(generated_arr))
-print(generated_arr)
+generated_arr = arr.insert_hill(150, 50, 60, 5)
+generated_arr = arr.insert_hill(100, 60, 150, 3)
 
 histogram = Hist(generated_arr)
 histogram.histogram(False)
